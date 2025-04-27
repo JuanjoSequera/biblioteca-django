@@ -1,0 +1,27 @@
+# Entorno virtual
+venv/
+env/
+.env
+
+# Bases de datos SQLite (si la usaste temporalmente)
+db.sqlite3
+*.sqlite3
+
+# Archivos compilados de Python
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Archivos de configuración local (si los tienes)
+local_settings.py
+
+# Archivos de Docker (depende de tu flujo, a veces se versionan)
+# postgres_data/ # No versionar el volumen de datos
+
+# Archivos de IDEs
+.idea/
+.vscode/
+
+# Archivos de Sistema Operativo
+.DS_Store
+Thumbs.db
