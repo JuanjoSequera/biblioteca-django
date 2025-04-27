@@ -1,0 +1,43 @@
+# docker-compose.yml
+version: "3.8"
+
+services:
+  # Servicio de Base de Datos (PostgreSQL)
+  db:
+    image: postgres:13 # Usar una imagen oficial de PostgreSQL
+    container_name: biblioteca_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/ # Persistir datos de la BD
+    environment:
+      # Estas variables deben coincidir con la configuración de DATABASES en settings.py
+      POSTGRES_DB: ${DB_NAME:-biblioteca_db}
+      POSTGRES_USER: ${DB_USER:-biblioteca_user}
+      POSTGRES_PASSWORD: ${DB_PASSWORD:-biblioteca_password}
+    ports:
+      - "5433:5432" # Mapea puerto local 5433 al 5432 del contenedor (opcional, para conectar desde fuera)
+
+  # Servicio de la Aplicación Web (Django)
+  web:
+    build: . # Construir la imagen usando el Dockerfile en el directorio actual
+    container_name: biblioteca_web
+    command: > # Comando para iniciar la app dentro del contenedor
+      sh -c "python manage.py migrate &&
+             gunicorn biblioteca_project.wsgi:application --bind 0.0.0.0:8000"
+    volumes:
+      - .:/app # Montar el código local en el contenedor para desarrollo (opcional)
+    ports:
+      - "8000:8000" # Mapear puerto local 8000 al 8000 del contenedor
+    environment:
+      # Variables de entorno para la conexión a la base de datos
+      DB_HOST: db # El nombre del servicio 'db' definido arriba
+      DB_NAME: ${DB_NAME:-biblioteca_db}
+      DB_USER: ${DB_USER:-biblioteca_user}
+      DB_PASSWORD: ${DB_PASSWORD:-biblioteca_password}
+      DB_PORT: 5432 # Puerto por defecto de PostgreSQL dentro de la red Docker
+      DJANGO_SECRET_KEY: ${DJANGO_SECRET_KEY:-cambiar_esta_clave_en_produccion} # Clave secreta de Django
+      DEBUG: ${DEBUG:-True} # Modo Debug (poner False en producción)
+    depends_on:
+      - db # Asegura que el servicio 'db' inicie antes que 'web'
+
+volumes:
+  postgres_data: # Define el volumen para persistir datos de PostgreSQL
