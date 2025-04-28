@@ -8,6 +8,7 @@ Necesitas tener instalados:
 
 - [Docker](https://docs.docker.com/get-docker/)
 - [Docker Compose](https://docs.docker.com/compose/install/) (Normalmente viene con Docker Desktop)
+- [Python](https://www.python.org/)
 
 ## Ejecutar y Probar el Proyecto
 
